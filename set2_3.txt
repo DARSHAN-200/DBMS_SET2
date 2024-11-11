@@ -1,0 +1,63 @@
+Problem Statement 3 (Unnamed Block) 
+Employee( emp_id, dept_idemp_name, DoJ, salary, commission,job_title) 
+Salary_Increment(emp_id, new_salary) 
+Consider the schema given above. Write a PLSQL Unnamed Block of code to increase the salary of employee
+ 115 based on the following conditions:  
+Accept emp_id from user. If experience of employee is more than 10 years, increase salary by 20%. If experience
+ is greater than 5 years, increase salary by 10% Otherwise 5%. (Hint: Find the years of experience from Date of
+ Joining (DoJ)). Store the incremented salary in Salary_Increment table. 
+Also handle the exception by named exception handler or user defined exception handler.
+
+
+
+
+DECLARE
+    v_emp_id      NUMBER;
+    v_salary      NUMBER(10, 2);
+    v_new_salary  NUMBER(10, 2);
+    v_commission  NUMBER(10, 2);
+    v_job_title   VARCHAR2(50);
+    v_doj         DATE;
+    v_experience  NUMBER;
+    
+    -- Exception handler for employee not found
+    e_emp_not_found EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_emp_not_found, -1403);
+
+BEGIN
+    -- Accept employee ID from user
+    v_emp_id := &emp_id;
+
+    -- Retrieve employee details
+    SELECT salary, doj
+    INTO v_salary, v_doj
+    FROM Employee
+    WHERE emp_id = v_emp_id;
+
+    -- Calculate years of experience
+    v_experience := TRUNC(MONTHS_BETWEEN(SYSDATE, v_doj) / 12);
+
+    -- Determine salary increment based on experience
+    IF v_experience > 10 THEN
+        v_new_salary := v_salary * 1.2;  -- 20% increase
+    ELSIF v_experience > 5 THEN
+        v_new_salary := v_salary * 1.1;  -- 10% increase
+    ELSE
+        v_new_salary := v_salary * 1.05; -- 5% increase
+    END IF;
+
+    -- Insert the new salary into the Salary_Increment table
+    INSERT INTO Salary_Increment (emp_id, new_salary)
+    VALUES (v_emp_id, v_new_salary);
+
+    -- Display the updated salary
+    DBMS_OUTPUT.PUT_LINE('The updated salary for Employee ID ' || v_emp_id || ' is: ' || v_new_salary);
+
+EXCEPTION
+    WHEN e_emp_not_found THEN
+        DBMS_OUTPUT.PUT_LINE('Error: Employee with ID ' || v_emp_id || ' not found.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
+
+END;
+/

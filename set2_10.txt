@@ -1,0 +1,40 @@
+Problem Statement 10 (CRUD) 
+Create a collection Social_Media having fields as User_Id, User_Name, No_of_Posts, No_of_Friends,
+ Friends_List, Interests. (Hint: Friends_List and Interests can be of array type) 
+I nsert 20 documents in the collection Social_Media. Write queries for following. 
+1. List all the users from collection Social_Media in formatted manner. 
+2. Find all users having number of posts greater than 100. 
+3. List the user names and their respective Friens_List 
+4. Display the user ids and Friends list of users who have more than 5 friends. 
+5. Display all users with no of posts in descending order.
+
+
+db.Social_Media.insertMany([
+    { User_Id: 1, User_Name: "Alice", No_of_Posts: 120, No_of_Friends: 6, Friends_List: ["Bob", "Charlie", "David"], Interests: ["Reading", "Gaming"] },
+    { User_Id: 2, User_Name: "Bob", No_of_Posts: 80, No_of_Friends: 3, Friends_List: ["Alice", "Charlie"], Interests: ["Photography", "Traveling"] },
+    { User_Id: 3, User_Name: "Charlie", No_of_Posts: 105, No_of_Friends: 8, Friends_List: ["Alice", "Bob", "David", "Eva"], Interests: ["Cooking", "Music"] },
+    { User_Id: 4, User_Name: "David", No_of_Posts: 150, No_of_Friends: 7, Friends_List: ["Alice", "Charlie", "Eva"], Interests: ["Sports", "Gaming"] }
+    // Add more documents to reach 20 entries
+]);
+
+
+Step 2: Queries
+Query 1: List all users from the Social_Media collection in a formatted manner..
+
+db.Social_Media.find().pretty();
+
+Query 2: Find all users having No_of_Posts greater than 100.
+
+db.Social_Media.find({ No_of_Posts: { $gt: 100 } });
+
+Query 3: List the User_Name and their respective Friends_List.
+
+db.Social_Media.find({}, { User_Name: 1, Friends_List: 1, _id: 0 });
+
+Query 4: Display the User_Id and Friends_List of users who have more than 5 friends.
+
+db.Social_Media.find({ No_of_Friends: { $gt: 5 } }, { User_Id: 1, Friends_List: 1, _id: 0 });
+
+Query 5: Display all users with No_of_Posts in descending order.
+
+db.Social_Media.find().sort({ No_of_Posts: -1 });
