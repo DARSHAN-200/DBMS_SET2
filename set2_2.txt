@@ -1,0 +1,87 @@
+1. Creating Tables with Referential Integrity
+
+
+-- Creating Customer Table
+CREATE TABLE Customer (
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Cust_Address VARCHAR(100),
+    Phone_no VARCHAR(15),
+    Email_ID VARCHAR(50),
+    Age INT
+);
+
+-- Creating Branch Table
+CREATE TABLE Branch (
+    BranchID INT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+-- Creating Account Table with Foreign Keys for Customer and Branch
+CREATE TABLE Account (
+    Account_no INT PRIMARY KEY,
+    BranchID INT,
+    CustID INT,
+    open_date DATE,
+    Account_type VARCHAR(20),
+    Balance DECIMAL(10, 2),
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+-- Inserting Data
+INSERT INTO Customer VALUES 
+(101, 'Alice', 'Mumbai', '1234567890', 'alice@example.com', 30),
+(102, 'Bob', 'Delhi', '2345678901', 'bob@example.com', 40),
+(103, 'Charlie', 'Bangalore', '3456789012', 'charlie@example.com', 28);
+
+INSERT INTO Branch VALUES 
+(1, 'Main Branch', 'Mumbai'),
+(2, 'City Branch', 'Delhi'),
+(3, 'Regional Branch', 'Bangalore');
+
+INSERT INTO Account VALUES 
+(1001, 1, 101, '2018-08-16', 'Saving', 10000.00),
+(1002, 2, 102, '2018-02-16', 'Loan', 5000.00),
+(1003, 3, 103, '2018-08-16', 'Saving', 7500.00);
+
+
+3. Create a View for Saving Accounts with Open Date as 16/8/2018
+
+CREATE VIEW Saving_Account AS
+SELECT Customer.CustID, Customer.Name, Customer.Cust_Address, Customer.Phone_no, Customer.Email_ID, Customer.Age, Account.open_date
+FROM Customer
+JOIN Account ON Customer.CustID = Account.CustID
+WHERE Account.Account_type = 'Saving' AND Account.open_date = '2018-08-16';
+
+4. Update the View with Cust_Address as "Pune" for CustID = 103
+
+UPDATE Customer
+SET Cust_Address = 'Pune'
+WHERE CustID = 103;
+
+5. Create a View for Loan Accounts with Open Date as 16/2/2018
+
+CREATE VIEW Loan_Account AS
+SELECT Customer.CustID, Customer.Name, Customer.Cust_Address, Customer.Phone_no, Customer.Email_ID, Customer.Age, Account.open_date
+FROM Customer
+JOIN Account ON Customer.CustID = Account.CustID
+WHERE Account.Account_type = 'Loan' AND Account.open_date = '2018-02-16';
+
+6. Create an Index on Primary Key Column of Table Customer
+
+CREATE INDEX idx_CustID ON Customer(CustID);
+
+7. Create an Index on Primary Key Column of Table Branch
+
+CREATE INDEX idx_BranchID ON Branch(BranchID);
+
+8. Create a Sequence on Customer Table
+
+ALTER TABLE Customer MODIFY CustID INT AUTO_INCREMENT;
+
+9. Create a Synonym ‘Cust_info’ for Branch Table
+
+CREATE VIEW Cust_info AS SELECT * FROM Branch;
+
