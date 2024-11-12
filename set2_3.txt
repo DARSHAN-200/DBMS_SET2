@@ -11,53 +11,63 @@ Also handle the exception by named exception handler or user defined exception h
 
 
 
-DECLARE
-    v_emp_id      NUMBER;
-    v_salary      NUMBER(10, 2);
-    v_new_salary  NUMBER(10, 2);
-    v_commission  NUMBER(10, 2);
-    v_job_title   VARCHAR2(50);
-    v_doj         DATE;
-    v_experience  NUMBER;
-    
-    -- Exception handler for employee not found
-    e_emp_not_found EXCEPTION;
-    PRAGMA EXCEPTION_INIT(e_emp_not_found, -1403);
+-- Creating Employee table
+CREATE TABLE Employee (
+    emp_id INT PRIMARY KEY,       -- Employee ID
+    emp_name VARCHAR(100),        -- Employee Name
+    DoJ DATE,                     -- Date of Joining
+    salary DECIMAL(10, 2),         -- Current salary (decimal for precision)
+    commission DECIMAL(5, 2),     -- Commission (if any)
+    job_title VARCHAR(50)         -- Job Title
+);
 
+-- Creating Salary_Increment table
+CREATE TABLE Salary_Increment (
+    emp_id INT PRIMARY KEY,       -- Employee ID
+    new_salary DECIMAL(10, 2)     -- New incremented salary
+);
+INSERT INTO Employee (emp_id, emp_name, DoJ, salary, commission, job_title)
+VALUES (115, 'John Doe', '2010-06-15', 5000.00, 0.00, 'Developer');
+
+DELIMITER $$
+
+
+CREATE PROCEDURE UpdateSalary(IN v_emp_id INT)
 BEGIN
-    -- Accept employee ID from user
-    v_emp_id := &emp_id;
+    DECLARE v_salary DECIMAL(10, 2);
+    DECLARE v_new_salary DECIMAL(10, 2);
+    DECLARE v_experience INT;
+    DECLARE v_doj DATE;
 
-    -- Retrieve employee details
-    SELECT salary, doj
+    SELECT salary, DoJ
     INTO v_salary, v_doj
     FROM Employee
     WHERE emp_id = v_emp_id;
 
-    -- Calculate years of experience
-    v_experience := TRUNC(MONTHS_BETWEEN(SYSDATE, v_doj) / 12);
 
-    -- Determine salary increment based on experience
-    IF v_experience > 10 THEN
-        v_new_salary := v_salary * 1.2;  -- 20% increase
-    ELSIF v_experience > 5 THEN
-        v_new_salary := v_salary * 1.1;  -- 10% increase
-    ELSE
-        v_new_salary := v_salary * 1.05; -- 5% increase
+    IF v_salary IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Employee ID not found. Please check the provided employee ID.';
     END IF;
 
-    -- Insert the new salary into the Salary_Increment table
+   
+    SET v_experience = TIMESTAMPDIFF(YEAR, v_doj, CURDATE());
+
+
+    IF v_experience > 10 THEN
+        SET v_new_salary = v_salary * 1.20;  -- 20% increase if experience > 10 years
+    ELSEIF v_experience > 5 THEN
+        SET v_new_salary = v_salary * 1.10;  -- 10% increase if experience > 5 years
+    ELSE
+        SET v_new_salary = v_salary * 1.05;  -- 5% increase otherwise
+    END IF;
+
+   
     INSERT INTO Salary_Increment (emp_id, new_salary)
     VALUES (v_emp_id, v_new_salary);
 
-    -- Display the updated salary
-    DBMS_OUTPUT.PUT_LINE('The updated salary for Employee ID ' || v_emp_id || ' is: ' || v_new_salary);
+  
+    SELECT v_new_salary AS NewSalary;
 
-EXCEPTION
-    WHEN e_emp_not_found THEN
-        DBMS_OUTPUT.PUT_LINE('Error: Employee with ID ' || v_emp_id || ' not found.');
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('An unexpected error occurred: ' || SQLERRM);
+END $$
 
-END;
-/
+DELIMITER ;
