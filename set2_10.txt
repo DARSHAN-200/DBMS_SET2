@@ -6,35 +6,36 @@ I nsert 20 documents in the collection Social_Media. Write queries for following
 2. Find all users having number of posts greater than 100. 
 3. List the user names and their respective Friens_List 
 4. Display the user ids and Friends list of users who have more than 5 friends. 
-5. Display all users with no of posts in descending order.
+5. Display all users with no of posts in descending order. 
 
+
+db.createCollection("Social_Media");
 
 db.Social_Media.insertMany([
-    { User_Id: 1, User_Name: "Alice", No_of_Posts: 120, No_of_Friends: 6, Friends_List: ["Bob", "Charlie", "David"], Interests: ["Reading", "Gaming"] },
-    { User_Id: 2, User_Name: "Bob", No_of_Posts: 80, No_of_Friends: 3, Friends_List: ["Alice", "Charlie"], Interests: ["Photography", "Traveling"] },
-    { User_Id: 3, User_Name: "Charlie", No_of_Posts: 105, No_of_Friends: 8, Friends_List: ["Alice", "Bob", "David", "Eva"], Interests: ["Cooking", "Music"] },
-    { User_Id: 4, User_Name: "David", No_of_Posts: 150, No_of_Friends: 7, Friends_List: ["Alice", "Charlie", "Eva"], Interests: ["Sports", "Gaming"] }
-    // Add more documents to reach 20 entries
+  { "User_Id": 1, "User_Name": "Alice", "No_of_Posts": 120, "No_of_Friends": 50, "Friends_List": ["Bob", "Charlie", "David"], "Interests": ["Reading", "Traveling"] },
+  { "User_Id": 2, "User_Name": "Bob", "No_of_Posts": 80, "No_of_Friends": 200, "Friends_List": ["Alice", "Charlie", "Eva"], "Interests": ["Gaming", "Movies"] },
+  { "User_Id": 3, "User_Name": "Charlie", "No_of_Posts": 150, "No_of_Friends": 150, "Friends_List": ["Alice", "Bob", "David", "Eva"], "Interests": ["Music", "Sports"] },
+  { "User_Id": 4, "User_Name": "David", "No_of_Posts": 50, "No_of_Friends": 75, "Friends_List": ["Alice", "Charlie", "Eva"], "Interests": ["Movies", "Reading"] },
+  { "User_Id": 5, "User_Name": "Eva", "No_of_Posts": 200, "No_of_Friends": 300, "Friends_List": ["Bob", "Charlie", "David"], "Interests": ["Traveling", "Photography"] },
+  { "User_Id": 6, "User_Name": "Frank", "No_of_Posts": 50, "No_of_Friends": 10, "Friends_List": ["Charlie", "David"], "Interests": ["Sports", "Music"] },
+  { "User_Id": 7, "User_Name": "Grace", "No_of_Posts": 130, "No_of_Friends": 80, "Friends_List": ["Bob", "David", "Eva"], "Interests": ["Reading", "Cooking"] },
+  { "User_Id": 8, "User_Name": "Hannah", "No_of_Posts": 95, "No_of_Friends": 120, "Friends_List": ["Alice", "Charlie", "Eva"], "Interests": ["Movies", "Technology"] },
+  { "User_Id": 9, "User_Name": "Ivy", "No_of_Posts": 20, "No_of_Friends": 30, "Friends_List": ["Frank", "Charlie"], "Interests": ["Gaming", "Movies"] },
+  { "User_Id": 10, "User_Name": "Jack", "No_of_Posts": 210, "No_of_Friends": 350, "Friends_List": ["Bob", "Grace", "Eva"], "Interests": ["Traveling", "Gaming"] },
+  { "User_Id": 11, "User_Name": "Katie", "No_of_Posts": 30, "No_of_Friends": 10, "Friends_List": ["Hannah", "Jack"], "Interests": ["Sports", "Gaming"] },
+  { "User_Id": 12, "User_Name": "Leo", "No_of_Posts": 90, "No_of_Friends": 80, "Friends_List": ["Frank", "Eva", "David"], "Interests": ["Photography", "Cooking"] },
+  { "User_Id": 13, "User_Name": "Mia", "No_of_Posts": 220, "No_of_Friends": 500, "Friends_List": ["Eva", "Grace", "Charlie"], "Interests": ["Movies", "Technology"] },
+  { "User_Id": 14, "User_Name": "Nathan", "No_of_Posts": 180, "No_of_Friends": 250, "Friends_List": ["David", "Frank", "Charlie"], "Interests": ["Music", "Technology"] },
+  { "User_Id": 15, "User_Name": "Olivia", "No_of_Posts": 110, "No_of_Friends": 100, "Friends_List": ["Hannah", "Grace"], "Interests": ["Traveling", "Photography"] },
+  { "User_Id": 16, "User_Name": "Paul", "No_of_Posts": 200, "No_of_Friends": 120, "Friends_List": ["Alice", "Eva"], "Interests": ["Cooking", "Movies"] },
+  { "User_Id": 17, "User_Name": "Quincy", "No_of_Posts": 250, "No_of_Friends": 350, "Friends_List": ["Bob", "David", "Hannah"], "Interests": ["Gaming", "Traveling"] },
+  { "User_Id": 18, "User_Name": "Rachel", "No_of_Posts": 300, "No_of_Friends": 200, "Friends_List": ["Alice", "Frank", "Eva"], "Interests": ["Movies", "Sports"] },
+  { "User_Id": 19, "User_Name": "Sophia", "No_of_Posts": 40, "No_of_Friends": 90, "Friends_List": ["Jack", "Mia"], "Interests": ["Sports", "Gaming"] },
+  { "User_Id": 20, "User_Name": "Tom", "No_of_Posts": 60, "No_of_Friends": 120, "Friends_List": ["Eva", "Grace"], "Interests": ["Music", "Traveling"] }
 ]);
 
 
-Step 2: Queries
-Query 1: List all users from the Social_Media collection in a formatted manner..
-
-db.Social_Media.find().pretty();
-
-Query 2: Find all users having No_of_Posts greater than 100.
-
-db.Social_Media.find({ No_of_Posts: { $gt: 100 } });
-
-Query 3: List the User_Name and their respective Friends_List.
-
-db.Social_Media.find({}, { User_Name: 1, Friends_List: 1, _id: 0 });
-
-Query 4: Display the User_Id and Friends_List of users who have more than 5 friends.
-
-db.Social_Media.find({ No_of_Friends: { $gt: 5 } }, { User_Id: 1, Friends_List: 1, _id: 0 });
-
-Query 5: Display all users with No_of_Posts in descending order.
-
-db.Social_Media.find().sort({ No_of_Posts: -1 });
+1.db.Social_Media.find({}, { "User_Id": 1, "User_Name": 1, "No_of_Posts": 1, "No_of_Friends": 1, "_id": 0 }).pretty();
+2.db.Social_Media.find({ "No_of_Posts": { $gt: 100 } }, { "User_Name": 1, "No_of_Posts": 1, "_id": 0 }).pretty();
+3.db.Social_Media.find({}, { "User_Name": 1, "Friends_List": 1, "_id": 0 }).pretty();
+4.db.Social_Media.find({ "No_of_Friends": { $gt: 5 } }, { "User_Id": 1, "Friends_List": 1, "_id": 0 }).pretty();

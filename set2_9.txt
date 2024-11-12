@@ -1,0 +1,84 @@
+Problem Statement 9 (Cursors) 
+Consider a table Employee with schema as Employee (Emp_id, Emp_Name,Salary).  
+1. Write an explicit cursor to display records of all employees with salary greater than 50,000. 
+2. Write a PL/SQL block of code using Implicit Cursor that will display total number of tuples in Employee
+ table. 
+3. Write a PL/SQL block of code using Parameterized Cursor that will display salary of employee id entered by
+ the user. 
+
+
+
+1. Explicit Cursor to Display Records of All Employees with Salary Greater Than 50,000
+
+DECLARE
+    CURSOR emp_cursor IS
+        SELECT Emp_id, Emp_Name, Salary
+        FROM Employee
+        WHERE Salary > 50000;
+        
+    emp_record emp_cursor%ROWTYPE;
+BEGIN
+    OPEN emp_cursor;
+    
+    LOOP
+        FETCH emp_cursor INTO emp_record;
+        EXIT WHEN emp_cursor%NOTFOUND;
+        
+        -- Display the employee details
+        DBMS_OUTPUT.PUT_LINE('Emp ID: ' || emp_record.Emp_id || 
+                             ', Name: ' || emp_record.Emp_Name || 
+                             ', Salary: ' || emp_record.Salary);
+    END LOOP;
+    
+    CLOSE emp_cursor;
+END;
+
+
+2. PL/SQL Block Using Implicit Cursor to Display the Total Number of Tuples in the Employee Table
+
+DECLARE
+    total_employees NUMBER;
+BEGIN
+    -- Use implicit cursor to count the total number of employees
+    SELECT COUNT(*) INTO total_employees
+    FROM Employee;
+    
+    -- Display the total count
+    DBMS_OUTPUT.PUT_LINE('Total number of employees: ' || total_employees);
+END;
+
+
+3. PL/SQL Block Using Parameterized Cursor to Display the Salary of an Employee Based on the Employee ID Entered by the User
+
+DECLARE
+    -- Declare a parameterized cursor to fetch employee salary by ID
+    CURSOR emp_cursor(p_emp_id IN NUMBER) IS
+        SELECT Salary
+        FROM Employee
+        WHERE Emp_id = p_emp_id;
+        
+    emp_salary NUMBER;
+BEGIN
+    -- Accept employee ID as input (you may adjust this part based on your environment for user input)
+    -- For demonstration, we use a hardcoded Emp_id, but this can be dynamically entered
+    DECLARE
+        emp_id_input NUMBER := 101;  -- You can change this to any ID you want to query
+    BEGIN
+        -- Open cursor for the provided employee ID
+        OPEN emp_cursor(emp_id_input);
+        
+        FETCH emp_cursor INTO emp_salary;
+        
+        -- Check if employee exists
+        IF emp_cursor%FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Salary of employee with ID ' || emp_id_input || ' is: ' || emp_salary);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Employee with ID ' || emp_id_input || ' not found.');
+        END IF;
+        
+        -- Close the cursor
+        CLOSE emp_cursor;
+    END;
+END;
+
+

@@ -1,0 +1,100 @@
+Problem Statement 11 (DDL USING MYSQL) 
+Create following tables using a given schema and insert appropriate data into the same:  
+Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)  
+Branch (Branch ID, Branch_Name, Address)  
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance) 
+1. Create the tables with referential integrity. 
+2. Draw the ER diagram for the same. 
+3. Create an Index on primary key column of table Account 
+4. Create the view as Customer_Info displaying the customer details for age less than 45. 
+5. Update the View with open date as 16/4/2017 
+6. Create a sequence on Branch able. 
+7. Create synonym ‘Branch_info’ for branch table.
+
+
+1. Create Tables with Referential Integrity
+
+
+-- Create Customer Table
+CREATE TABLE Customer (
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Cust_Address VARCHAR(200),
+    Phone_no VARCHAR(15),
+    Email_ID VARCHAR(100),
+    Age INT
+);
+
+-- Create Branch Table
+CREATE TABLE Branch (
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(100),
+    Address VARCHAR(200)
+);
+
+-- Create Account Table with Foreign Keys
+CREATE TABLE Account (
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(50),
+    Balance DECIMAL(10, 2),
+    FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+
+3. Create an Index on Primary Key Column of Table Account
+
+CREATE INDEX idx_account_no ON Account(Account_no);
+
+
+4. Create a View as Customer_Info Displaying the Customer Details for Age Less Than 45
+
+CREATE VIEW Customer_Info AS
+SELECT CustID, Name, Cust_Address, Phone_no, Email_ID, Age
+FROM Customer
+WHERE Age < 45;
+
+
+5. Update the View with Open Date as 16/4/2017
+
+CREATE OR REPLACE VIEW Customer_Info AS
+SELECT CustID, Name, Cust_Address, Phone_no, Email_ID, Age, '2017-04-16' AS open_date
+FROM Customer
+WHERE Age < 45;
+
+
+6. Create a Sequence on Branch Table
+
+-- Using AUTO_INCREMENT for Branch_ID
+CREATE TABLE Branch (
+    Branch_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Branch_Name VARCHAR(100),
+    Address VARCHAR(200)
+);
+
+Alternatively, if you want to create a simulated sequence:
+
+DELIMITER $$
+
+CREATE PROCEDURE get_next_branch_id()
+BEGIN
+    DECLARE next_id INT;
+    
+    -- Fetch the current maximum Branch_ID
+    SELECT MAX(Branch_ID) + 1 INTO next_id FROM Branch;
+    
+    -- Return the next Branch_ID
+    SELECT next_id;
+END $$
+
+DELIMITER ;
+
+
+7. Create Synonym Branch_info for Branch Table
+
+CREATE VIEW Branch_info AS
+SELECT * FROM Branch;
+

@@ -1,0 +1,62 @@
+Problem Statement 7 (Map Reduce) 
+Create Book Collection with (Title, Author_name, Borrowed_status) as fields. Write Map Reduce Functions for
+ following requirements. 
+1. Display Author wise list of books. 
+2. Display Author wise list of books having Borrowed status as “True”. 
+3. Display Author wise list of books having price greater than 300. 
+
+db.Book.insertMany([
+  { "Title": "Book1", "Author_name": "John Doe", "Borrowed_status": true, "Price": 500 },
+  { "Title": "Book2", "Author_name": "Jane Smith", "Borrowed_status": false, "Price": 250 },
+  { "Title": "Book3", "Author_name": "John Doe", "Borrowed_status": true, "Price": 450 },
+  { "Title": "Book4", "Author_name": "Alice Brown", "Borrowed_status": true, "Price": 350 },
+  { "Title": "Book5", "Author_name": "John Doe", "Borrowed_status": false, "Price": 200 },
+  { "Title": "Book6", "Author_name": "Jane Smith", "Borrowed_status": true, "Price": 600 },
+  { "Title": "Book7", "Author_name": "Alice Brown", "Borrowed_status": false, "Price": 150 },
+  { "Title": "Book8", "Author_name": "John Doe", "Borrowed_status": true, "Price": 320 },
+  { "Title": "Book9", "Author_name": "Alice Brown", "Borrowed_status": true, "Price": 400 },
+  { "Title": "Book10", "Author_name": "John Doe", "Borrowed_status": false, "Price": 150 }
+]);
+// Map function for author-wise books
+1.var map1 = function() {
+  emit(this.Author_name, this.Title);  // Emit Author_name as the key, Title as the value
+};
+
+// Reduce function to group the titles by author
+var reduce1 = function(key, values) {
+  return values;  // Return the list of book titles for each author
+};
+
+// Run the MapReduce query
+db.Book.mapReduce(map1, reduce1, { out: { inline: 1 } });
+
+2.// Map function for author-wise borrowed books
+var map2 = function() {
+  if (this.Borrowed_status === true) {
+    emit(this.Author_name, this.Title);  // Emit Author_name as the key, Title as the value
+  }
+};
+
+// Reduce function to group the borrowed books by author
+var reduce2 = function(key, values) {
+  return values;  // Return the list of borrowed book titles for each author
+};
+
+// Run the MapReduce query
+db.Book.mapReduce(map2, reduce2, { out: { inline: 1 } });
+
+
+3.// Map function for author-wise books with price greater than 300
+var map3 = function() {
+  if (this.Price > 300) {
+    emit(this.Author_name, this.Title);  // Emit Author_name as the key, Title as the value
+  }
+};
+
+// Reduce function to group books by author and price > 300
+var reduce3 = function(key, values) {
+  return values;  // Return the list of book titles for each author where price > 300
+};
+
+// Run the MapReduce query
+db.Book.mapReduce(map3, reduce3, { out: { inline: 1 } });

@@ -1,0 +1,90 @@
+Problem Statement 14 (DML USING MYSQL) 
+Create following tables using a given schema and insert appropriate data into the same:  
+Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)  
+Branch (Branch ID, Branch_Name, Address)  
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance) 
+1. Modify the size of column “Email_Address” to 20 in Customer table. 
+2. Change the column “Email_Address” to Not Null in Customer table. 
+3. Display the total customers with the balance >50, 000 Rs. 
+4. Display average balance for account type=”Saving Account”. 
+5. Display the customer details that lives in Pune or name starts with ’A’. 
+6. Create a table Saving_Account with (Account_no, Branch ID, CustID, date_open,  Balance) using
+ Account Table. 
+7. Display the customer details Age wise with balance>=20,000Rs
+
+
+-- Step 1: Create the tables as per schema
+CREATE TABLE Customer (
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Cust_Address VARCHAR(100),
+    Phone_no VARCHAR(15),
+    Email_ID VARCHAR(50),  -- This will be altered later
+    Age INT
+);
+
+CREATE TABLE Branch (
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+CREATE TABLE Account (
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(20),
+    Balance DECIMAL(10,2),
+    FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+-- Step 2: Insert appropriate data into the tables (example data)
+INSERT INTO Customer VALUES
+(1, 'Alice', '123 Street A, Pune', '1234567890', 'alice@example.com', 30),
+(2, 'Bob', '456 Street B, Mumbai', '0987654321', 'bob@example.com', 45);
+
+INSERT INTO Branch VALUES
+(1, 'Main Branch', '123 Central Rd, Pune'),
+(2, 'West Branch', '456 West St, Mumbai');
+
+INSERT INTO Account VALUES
+(1001, 1, 1, '2023-01-15', 'Saving Account', 60000),
+(1002, 2, 2, '2022-05-20', 'Current Account', 45000);
+
+-- Task 1: Modify the size of column “Email_ID” to 20 in Customer table.
+ALTER TABLE Customer MODIFY Email_ID VARCHAR(20);
+
+-- Task 2: Change the column “Email_ID” to Not Null in Customer table.
+ALTER TABLE Customer MODIFY Email_ID VARCHAR(20) NOT NULL;
+
+-- Task 3: Display the total customers with the balance >50,000 Rs.
+SELECT COUNT(*) AS Total_Customers
+FROM Account
+WHERE Balance > 50000;
+
+-- Task 4: Display average balance for account type=”Saving Account”.
+SELECT AVG(Balance) AS Avg_Balance
+FROM Account
+WHERE Account_type = 'Saving Account';
+
+-- Task 5: Display the customer details that lives in Pune or name starts with ’A’.
+SELECT *
+FROM Customer
+WHERE Cust_Address LIKE '%Pune%' OR Name LIKE 'A%';
+
+-- Task 6: Create a table Saving_Account with (Account_no, Branch_ID, CustID, date_open, Balance) using Account Table.
+CREATE TABLE Saving_Account AS
+SELECT Account_no, Branch_ID, CustID, date_open, Balance
+FROM Account
+WHERE Account_type = 'Saving Account';
+
+-- Task 7: Display the customer details Age wise with balance >= 20,000 Rs.
+SELECT Customer.*
+FROM Customer
+JOIN Account ON Customer.CustID = Account.CustID
+WHERE Account.Balance >= 20000
+ORDER BY Customer.Age;
+
+

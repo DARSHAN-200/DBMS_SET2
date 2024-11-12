@@ -1,0 +1,53 @@
+
+
+Problem Statement 12 (Triggers) 
+Employee( emp_id, dept_idemp_name, DoJ, salary, commission,job_title)  
+Consider the schema given above for Write a PLSQL Program to  
+1. Create a Trigger to ensure the salary of the employee is not decreased.  
+2. Whenever the job title is changed for an employee write the following details into job_history table. Employee
+ ID, old job title, old department ID, DoJ for start date, system date for end date. 
+
+
+
+Schema:
+Employee: emp_id, dept_id, emp_name, DoJ, salary, commission, job_title
+job_history: emp_id, old_job_title, old_dept_id, start_date, end_date
+1. Trigger to Ensure the Salary of the Employee is Not Decreased
+This trigger will fire before an update on the Employee table and will ensure that the new salary is greater than or equal to the existing salary.
+
+PL/SQL Trigger:
+
+CREATE OR REPLACE TRIGGER salary_check
+BEFORE UPDATE ON Employee
+FOR EACH ROW
+BEGIN
+    -- Check if the new salary is less than the old salary
+    IF :NEW.salary < :OLD.salary THEN
+        -- Raise an error if the new salary is less
+        RAISE_APPLICATION_ERROR(-20001, 'Salary cannot be decreased.');
+    END IF;
+END;
+/
+
+
+2. Trigger to Log Job Title Changes in job_history Table
+This trigger will insert a record into the job_history table whenever an employee's job title is changed. It logs the employee's emp_id, the old job title, the old department ID, the start date (from the DoJ), and the system date as the end date.
+
+PL/SQL Trigger:
+
+
+CREATE OR REPLACE TRIGGER job_title_history
+AFTER UPDATE ON Employee
+FOR EACH ROW
+BEGIN
+    -- Check if the job title is changed
+    IF :NEW.job_title != :OLD.job_title THEN
+        -- Insert into job_history table
+        INSERT INTO job_history (emp_id, old_job_title, old_dept_id, start_date, end_date)
+        VALUES (:OLD.emp_id, :OLD.job_title, :OLD.dept_id, :OLD.DoJ, SYSDATE);
+    END IF;
+END;
+/
+
+
+

@@ -1,0 +1,47 @@
+Problem Statement 19 (Aggregation & Indexing) 
+Create the Collection Movies_Data( Movie_ID, Movie_Name, Director, Genre, BoxOfficeCollection) and
+ solve the following: 
+1.     
+2.     
+3.     
+Display a list stating how many Movies are directed by each “Director”. 
+Display list of Movies with the highest BoxOfficeCollection in each Genre. 
+Display list of Movies with the highest BoxOfficeCollection in each Genre in ascending order
+ of BoxOfficeCollection. 
+4.     
+5.     
+6.     
+7.     
+Create an index on field Movie_ID. 
+Create an index on fields ” Movie_Name” and ” Director”. 
+Drop an index on field  Movie_ID. 
+Drop an index on fields ” Movie_Name” and ” Director”. ---------------------------------------------------------------------------
+db.createCollection("Movies_Data");
+
+db.Movies_Data.insertMany([
+  { "Movie_ID": 1, "Movie_Name": "Movie A", "Director": "Director X", "Genre": "Action", "BoxOfficeCollection": 500000 },
+  { "Movie_ID": 2, "Movie_Name": "Movie B", "Director": "Director Y", "Genre": "Comedy", "BoxOfficeCollection": 300000 },
+  { "Movie_ID": 3, "Movie_Name": "Movie C", "Director": "Director X", "Genre": "Action", "BoxOfficeCollection": 700000 },
+  { "Movie_ID": 4, "Movie_Name": "Movie D", "Director": "Director Z", "Genre": "Drama", "BoxOfficeCollection": 400000 },
+  { "Movie_ID": 5, "Movie_Name": "Movie E", "Director": "Director Y", "Genre": "Comedy", "BoxOfficeCollection": 250000 },
+  { "Movie_ID": 6, "Movie_Name": "Movie F", "Director": "Director Z", "Genre": "Drama", "BoxOfficeCollection": 600000 },
+  { "Movie_ID": 7, "Movie_Name": "Movie G", "Director": "Director X", "Genre": "Action", "BoxOfficeCollection": 800000 },
+  { "Movie_ID": 8, "Movie_Name": "Movie H", "Director": "Director Y", "Genre": "Comedy", "BoxOfficeCollection": 350000 }
+]);
+
+1.db.Movies_Data.aggregate([
+  { $group: { _id: "$Director", movieCount: { $sum: 1 } } }
+]);
+
+2.db.Movies_Data.aggregate([
+  { $group: { _id: "$Genre", highestBoxOffice: { $max: "$BoxOfficeCollection" } } }
+]);
+3.db.Movies_Data.aggregate([
+  { $group: { _id: "$Genre", highestBoxOffice: { $max: "$BoxOfficeCollection" } } },
+  { $sort: { highestBoxOffice: 1 } }
+]);
+4.db.Movies_Data.createIndex({ "Movie_ID": 1 });
+5.db.Movies_Data.createIndex({ "Movie_Name": 1, "Director": 1 });
+6.db.Movies_Data.dropIndex({ "Movie_ID": 1 });
+
+7.db.Movies_Data.dropIndex({ "Movie_Name": 1, "Director": 1 });

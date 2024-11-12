@@ -1,0 +1,68 @@
+Problem Statement 8 (JOINS & SUBQUERIES USING MYSQL) 
+Consider Following Schema 
+Employee (Employee_id, First_name, last_name , hire_date, salary, Job_title, manager_id, department_id)
+ Departments(Department_id, Department_name, Manager_id, Location_id) 
+Locations(location_id ,street_address ,postal_code, city, state, country_id) 
+Manager(Manager_id, Manager_name) 
+Create the tables with referential integrity. Solve following queries using joins and subqueries. 
+1. Write a query to find the names (first_name, last_name) and the salaries of the employees who have a
+ higher salary than the employee whose last_name='Singh”. 
+2. Write a query to find the names (first_name, last_name) of the employees who have a manager and
+ work for a department based in the United States. 
+2. Write a query to find the names (first_name, last_name), the salary of the employees whose salary is
+ greater than the average salary. 
+3. Write a query to find the employee id, name (last_name) along with their manager_id, manager name
+ (last_name). 
+4. Find the names and hire date of the employees who were hired after 'Jones'.
+
+
+1. Names (first_name, last_name) and salaries of employees who have a higher salary than the employee whose last_name = 'Singh'
+
+SELECT e.first_name, e.last_name, e.salary
+FROM Employee e
+WHERE e.salary > (
+    SELECT salary
+    FROM Employee
+    WHERE last_name = 'Singh'
+);
+
+
+2. Names (first_name, last_name) of employees who have a manager and work for a department based in the United States
+
+SELECT e.first_name, e.last_name
+FROM Employee e
+JOIN Departments d ON e.department_id = d.department_id
+JOIN Locations l ON d.location_id = l.location_id
+WHERE e.manager_id IS NOT NULL
+AND l.country_id = 'US';
+
+
+3. Names (first_name, last_name), and salary of the employees whose salary is greater than the average salary
+
+SELECT e.first_name, e.last_name, e.salary
+FROM Employee e
+WHERE e.salary > (
+    SELECT AVG(salary)
+    FROM Employee
+);
+
+
+4. Employee ID, last name along with their manager_id, and manager name (last_name)
+
+SELECT e.employee_id, e.last_name AS employee_last_name, e.manager_id, m.manager_name
+FROM Employee e
+LEFT JOIN Manager m ON e.manager_id = m.manager_id;
+
+
+5. Names and hire date of the employees who were hired after the employee named 'Jones'
+
+
+SELECT e.first_name, e.last_name, e.hire_date
+FROM Employee e
+WHERE e.hire_date > (
+    SELECT hire_date
+    FROM Employee
+    WHERE last_name = 'Jones'
+);
+
+
